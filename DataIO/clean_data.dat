@@ -1,0 +1,16 @@
+np.savetxt('clean_data', 'w', fmt='%.2e')
+
+DataIn = np.loadtxt('test.out')
+
+for i in range(100): 
+    for j in range(5): 
+        f.write(' ' * random.randint(0, 6))
+        f.write('%0*.*g' % (random.randint(8, 12),
+                            random.randint(5, 10), 
+                            100 * random.random()))
+        if j != 4: 
+            f.write(',')
+    f.write('\n')
+f.close()
+
+print DataIn

@@ -1,5 +1,3 @@
-
-%pylab inline
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -25,7 +23,8 @@ class Blob():
         y1 = center_of_mass2[0]
         y2 = center_of_mass2[1]
         
-        self.distance = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+        #using the round function to make estimates go to 4 decimal places
+        self.distance = round(((x2 - x1)**2 + (y2 - y1)**2)**0.5), 4))
         return self.distance
     
     def centerOfMass(self): 
@@ -36,16 +35,18 @@ class Blob():
         for location in self.blobs:
             x_total += location[0]
             y_total += location[1]
-        list_of_x = float(x_total)/len(self.blobs)
-        list_of_y = float(y_total)/len(self.blobs)
-        self.ceterOfMass = [list_of_x, list_of_y]
-        return [list_of_x, list_of_y]
+        xave = float(x_total)/len(self.blobs)
+        yave = float(y_total)/len(self.blobs)
+        self.centerOfMass = [xave, yave]
+        return [xave, yave]
     
-def count(picture): 
+def count(picture, counter, list_of_blobs): 
     """Scan the image top to bottom and left to right using a nested loop. 
     When black pixel is found, incriment the count, then call the fill 
     function to fill in all the pixels conected to that one. Pixels are then
     put into the blob in the fill function."""
+    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
     xsize, ysize = picture.size
     temp = picture.load()
     result = 0
@@ -56,10 +57,10 @@ def count(picture):
                 #making a new blob, getting it's mass, center, filling
                 # and adding it to a list of blobs
                 blob2 = Blob()
-                fill(temp,xsize,ysize,x,y,a_blob)
-                a_blob.mass()
-                a_blob.centerOfMass()
-                list_of_blobs.append(a_blob)
+                fill(temp,xsize,ysize,x,y,blob2)
+                blob2.mass()
+                blob2.centerOfMass()
+                list_of_blobs.append(blob2)
     return list_of_blobs
         
     
@@ -100,7 +101,7 @@ def monochrome(picture, tau): #taken from counting stars tour
     for x in range(xsize):
         for y in range(ysize):
             r,g,b = temp[x,y]
-            if r+g+b >= threshold: 
+            if r+g+b >= tau: 
                 temp[x,y] = black
             else:
                 temp[x,y] = white
@@ -109,9 +110,10 @@ def BlobFinder(picture, tau):
     '''find all blobs in the picture using the luminance threshold tau'''
     float(tau)
     list_of_blobs = []
-    monochrome(picture,tau)
-    every_blob = count(picture, fill, list_of_blobs)
-    return every_blob
+    monochrome(picture, tau)
+    all_blobs = count(picture,fill,list_of_blobs)
+    
+    return all_blobs
 
 def countBeads(P, list_of_blobs):
     '''return the number of beads with >= P pixels'''

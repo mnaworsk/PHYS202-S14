@@ -6,17 +6,29 @@ from StringIO import StringIO
 
 #Creating blob class and implementing parameters
 class Blob(): 
+    
     def __init__(self): 
         #construct an empty blob
         self.blob_location = []
         self._mass = 0
+        
     def add(self, i, j): 
         #add a pixel at location (i,j) to the blob
         self.blob_location.append((i,j));
+        
     def mass(self): 
         #return number of pixels added, which equals the blob's mass
         self._mass = len(self.blob_location)
         return self._mass
+    
+    def distanceTo(self, b): 
+        #return distance between centers of masses of this blob and blob b
+        #using the round function to make estimates go to 4 decimal places
+        distance = round(((b.center_of_mass[0] - self.center_of_mass[0])**2) 
+                               + ((b.center_of_mass[1] - self.center_of_mass[1])**2)
+                              **0.5, 4)
+        return self.distance
+
     def centerOfMass(self): 
         #return touples of x,y values
         x = 0
@@ -28,14 +40,7 @@ class Blob():
         yave = float(y)/len(self.blob_location)
         self.centerOfMass = [xave, yave]
         return [xave, yave]
-    def distanceTo(self, b): 
-        #return distance between centers of masses of this blob and blob b
-        #using the round function to make estimates go to 4 decimal places
-        distance = round(((b.center_of_mass[0] - self.center_of_mass[0])**2) 
-                               + ((b.center_of_mass[1] - self.center_of_mass[1])**2)
-                              **0.5, 4)
-        #return self.distance
-
+    
     
 def monochrome(picture, tau): #taken from counting stars tour
     """loops over the pixels in the loaded image, 

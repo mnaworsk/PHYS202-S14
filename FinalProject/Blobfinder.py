@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-import requests
-from StringIO import StringIO
 
 #Creating blob class and implementing parameters
 class Blob(): 
@@ -10,7 +8,6 @@ class Blob():
     def __init__(self): 
         #construct an empty blob
         self.blob_location = []
-        self._mass = 0
         
     def add(self, i, j): 
         #add a pixel at location (i,j) to the blob
@@ -18,8 +15,7 @@ class Blob():
         
     def mass(self): 
         #return number of pixels added, which equals the blob's mass
-        self._mass = len(self.blob_location)
-        return self._mass
+        return len(self.blob_location)
     
     def centerOfMass(self): 
         #return touples of x,y values

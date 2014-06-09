@@ -21,33 +21,32 @@ class Blob():
         self._mass = len(self.blob_location)
         return self._mass
     
-    def distanceTo(self, b): 
-        #return distance between centers of masses of this blob and blob b
-        #using the round function to make estimates go to 4 decimal places
-        distance = round(((b.center_of_mass[0] - self.center_of_mass[0])**2) 
-                               + ((b.center_of_mass[1] - self.center_of_mass[1])**2)
-                              **0.5, 4)
-        return self.distance
-
     def centerOfMass(self): 
         #return touples of x,y values
-        x = 0
-        y = 0
+        sumx = 0
+        sumy = 0
         for location in self.blob_location:
             x += location[0]
             y += location[1]
-        xave = float(x)/len(self.blob_location)
-        yave = float(y)/len(self.blob_location)
-        self.centerOfMass = [xave, yave]
-        return [xave, yave]
+        return (sumx / len(self.blob_location), sumy / len(self.blob_location))
+    
+    def distanceTo(self, b): 
+        #return distance between centers of masses of this blob and blob b
+        #using the round function to make estimates go to 4 decimal places
+        distance = round(((slef.center_of_mass()[0] - b.center_of_mass()[0])**2) 
+                               + ((self.center_of_mass()[1] - b.center_of_mass()[1])**2)
+                              **0.5, 4)
+        return distance
+
     
     
+#applying monochrome to images so blobs can be found easily
 def monochrome(picture, tau): #taken from counting stars tour
     """loops over the pixels in the loaded image, 
     replacing the RGB values of each with either 
     black or white depending on whether its total 
     luminance is above or below some threshold 
-    tau"""
+    tau. Makes blobs appear white on black background"""
     black = (0, 0, 0)
     white = (255, 255, 255)
     xsize, ysize = picture.size
@@ -61,22 +60,7 @@ def monochrome(picture, tau): #taken from counting stars tour
             else:
                 temp[x,y] = white
                 
-def count(picture, counter, list_of_blobs): 
-    """Scan the image top to bottom and left to right using a nested loop. 
-    When black pixel is found, incriment the count, then call the fill 
-    function to fill in all the pixels conected to that one. Pixels are then
-    put into the blob in the fill function."""
-    BLACK = (0, 0, 0)
-    RED = (255, 0, 0)
-    xsize, ysize = picture.size
-    temp = picture.load()
-    list_of_blobs = []
-    blob_count = 0
-    for x in range(xsize):
-        for y in range(ysize):
-            if temp[x,y] == BLACK: 
-                list_of_blobs.append(fill(temp, xsize, ysize, x, y))
-    return list_of_blobs
+
     
 def fill(picture, xsize, ysize, xstart, ystart):
     """keep a list of pixels that need to be looked at, but haven't 
@@ -87,6 +71,7 @@ def fill(picture, xsize, ysize, xstart, ystart):
     RED = (255, 0, 0)
     queue = [(xstart,ystart)]
     blobB = Blob()
+    blobB.add(xstart, ystart)
     while queue:
         x,y,queue = queue[0][0], queue[0][1], queue[1:]
         if picture[x,y] == BLACK:
@@ -107,27 +92,31 @@ def fill(picture, xsize, ysize, xstart, ystart):
 def BlobFinder(picture, tau):
     '''find all blobs in the picture using the luminance threshold tau'''
     list_of_blobs = []
-    float(tau)
+    xsize, ysize = picture.size
+    temp = picture.load()
+    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
     monochrome(picture, tau)
-    list_of_more_blobs = count(picture, fill, list_of_blobs)
+    for x in range(xsize):
+        for y in range(ysize): 
+            if temp[x,y] == BLACK: 
+                blobs.append(fill(temp, xsize, ysize, x, y))
     
-    return list_of_more_blobs
+    return list_of_blobs
 
-def countBeads(P, bloblist):
+def countBeads(P, blobs):
     '''return the number of beads with >= P pixels'''
-    countable_blobs = []
-    for b in bloblist: 
-        x = b.mass()
-        if x >= P: 
-            countable_blobs.append(b)
-    return len(countable_blobs)
+    counted_blobs = 0
+    for b in blobs: 
+        if b.mass() >= P: 
+            counted_blobs += 1
+    return counted_blobs
     
 
 def getBeads(P, blobs):
     '''return all beads with >= P pixels'''
-    countable_blobs = []
-    for b in countable_blobs: 
-        x = b.mass()
-        if x >= P:
-            countable_blobs.append(b)
-    return countable_blobs
+    beads = []
+    for b in blobs: 
+        if b.mass() >= P: 
+            beads.append(b)
+    return beads

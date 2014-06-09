@@ -22,15 +22,15 @@ class Blob():
         sumx = 0
         sumy = 0
         for location in self.blob_location:
-            x += location[0]
-            y += location[1]
+            sumx += location[0]
+            sumy += location[1]
         return (sumx / len(self.blob_location), sumy / len(self.blob_location))
     
     def distanceTo(self, b): 
         #return distance between centers of masses of this blob and blob b
         #using the round function to make estimates go to 4 decimal places
-        distance = round(((slef.center_of_mass()[0] - b.center_of_mass()[0])**2) 
-                               + ((self.center_of_mass()[1] - b.center_of_mass()[1])**2)
+        distance = round(((self.centerOfMass()[0] - b.centerOfMass()[0])**2) 
+                               + ((self.centerOfMass()[1] - b.centerOfMass()[1])**2)
                               **0.5, 4)
         return distance
 
@@ -96,7 +96,7 @@ def BlobFinder(picture, tau):
     for x in range(xsize):
         for y in range(ysize): 
             if temp[x,y] == BLACK: 
-                blobs.append(fill(temp, xsize, ysize, x, y))
+                list_of_blobs.append(fill(temp, xsize, ysize, x, y))
     
     return list_of_blobs
 
